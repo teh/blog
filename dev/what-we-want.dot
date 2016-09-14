@@ -1,0 +1,10 @@
+# run dot file.dot -T svg
+
+digraph {
+        rankdir="LR";
+        node [shape="box"];
+        "libc" [ style=filled, fillcolor = "#00dd00", label="recompile\nlibc"];
+        "openssl" [ style=filled, fillcolor = "#aaaaaa", label="copy & fixup paths\nopenssl"];
+        "nginx" [ style=filled, fillcolor = "#aaaaaa", label="copy & fixup paths\nnginx"];
+        "libc" -> "openssl" -> "nginx" [dir=back];
+}
