@@ -27,6 +27,8 @@ let do = {
         };
       };
 
+      require = [ ./admin-users.nix ];
+
       networking = {
         firewall = {
           enable = true;
@@ -35,7 +37,8 @@ let do = {
           iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o enp0s3 -j MASQUERADE
         '';
           allowedUDPPorts = [ 1194 ]; # openvpn
-          allowedTCPPorts = [ 80 443 ];
+          allowedTCPPorts = [ 80 443 1999 ]; # 1999 is for testing webhooks
+          # ssh -R :1999:127.0.0.1:7777 theshortlog.com
           trustedInterfaces = [ "tun0" ];
         };
       };
@@ -76,6 +79,12 @@ let do = {
             enableACME = true;
             locations."/" = {
               root = pkgs.callPackage ./blog.nix {};
+            };
+            locations."/webhooktests" = {
+              extraConfig = ''
+                rewrite /webhooktests/(.*) /$1  break;
+                proxy_pass         http://127.0.0.1:1999;
+              '';
             };
           };
         };
